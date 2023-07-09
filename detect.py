@@ -159,8 +159,15 @@ def run(
         for i in temp:
             if i not in saves:
                 n = int(dist[temp.index(i)])
-                text.append(f"{i} is {n} inches far")
-
+                if n < 10:
+                    d = "very close"
+                elif n < 30:
+                    d = "near"
+                else:
+                    d = "far"
+                text.append(f"{i} is {d}")
+            else:
+                saves.remove(i)
         for i in text:
             engine.say(i)
             engine.runAndWait()  
