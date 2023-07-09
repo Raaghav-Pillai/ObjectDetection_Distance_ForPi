@@ -44,6 +44,7 @@ def run(
 ):
     temp = []
     dist = []
+    coord = []
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
     is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
@@ -142,6 +143,7 @@ def run(
                         annotator.box_label(xyxy, label, color=colors(c, True))
                         temp.append(names[c])
                         dist.append(distancei)
+                        coord.append(xyxy)
                     if save_crop:
                         save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
 
@@ -156,16 +158,30 @@ def run(
                 cv2.waitKey(1)  # 1 millisecond
         
         text = []
+        c = ""
         for i in temp:
             if i not in saves:
                 n = int(dist[temp.index(i)])
+                xy = coord[temp.index(i)]
                 if n < 10:
                     d = "very close"
                 elif n < 30:
                     d = "near"
                 else:
                     d = "far"
-                text.append(f"{i} is {d}")
+
+                y = int((xy[3]+xy[1])/2)
+                x = int((xy[2]+xy[0])/2)
+                if y < 320:
+                    c = "top"
+                else:
+                    c = "bottom"
+                
+                if x < 320:
+                    c = c + " left"
+                else:
+                    c = c + " right"
+                text.append(f"{i} is {d} in {c}")
             else:
                 saves.remove(i)
         for i in text:
@@ -175,6 +191,7 @@ def run(
         saves = temp
         temp = []
         dist = []
+        coord = []
         time.sleep(3)
 
 def parse_opt():
