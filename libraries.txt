@@ -1,0 +1,21 @@
+# Usage: pip install -r requirements.txt
+
+gitpython
+matplotlib
+numpy
+opencv-python
+Pillow
+psutil
+PyYAML
+requests
+scipy
+thop
+torch
+torchvision
+tqdm
+ultralytics
+pandas
+seaborn
+setuptools
+pyttsx3
+time
