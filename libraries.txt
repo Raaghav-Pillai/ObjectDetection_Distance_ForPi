@@ -19,3 +19,4 @@ seaborn
 setuptools
 pyttsx3
 time
+translate
