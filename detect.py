@@ -6,6 +6,9 @@ from pathlib import Path
 import time
 import torch
 import pyttsx3
+from translate import Translator
+
+translator= Translator(to_lang="Hindi")
 
 engine = pyttsx3.init()  
 
@@ -139,7 +142,7 @@ def run(
                         box_width = xyxy[2] - xyxy[0]
                         box_height = xyxy[3] - xyxy[1]
                         distancei = (2 * 3.14 * 180) / ((box_width + box_height) * 360) * 1000 + 3
-                        label = None if False else (names[c] if False else f'{names[c]} {conf:.2f} {distancei}')
+                        label = None if False else (names[c] if False else f'{names[c]}')
                         annotator.box_label(xyxy, label, color=colors(c, True))
                         temp.append(names[c])
                         dist.append(distancei)
@@ -169,30 +172,38 @@ def run(
                     d = "near"
                 else:
                     d = "far"
-
                 y = int((xy[3]+xy[1])/2)
                 x = int((xy[2]+xy[0])/2)
-                if y < 320:
-                    c = "top"
+                if xy[3] >320 and xy[1] <320 and x<320:  
+                    c ="left"
+                elif xy[3] >320 and xy[1] <320 and x>320:
+                    c ="right"
+                elif xy[3] >320 and xy[1] <320 and xy[2] < 320 and xy[0] > 320:
+                    c = "center"
                 else:
-                    c = "bottom"
+                    if y < 320:
+                        c = "top"
+                    else:
+                        c = "bottom"
                 
-                if x < 320:
-                    c = c + " left"
-                else:
-                    c = c + " right"
+                    if x < 320:
+                        c = c + " left"
+                    else:
+                        c = c + " right"
                 text.append(f"{i} is {d} in {c}")
             else:
                 saves.remove(i)
         for i in text:
-            engine.say(i)
+            translation = translator.translate(i)
+            print(translation)
+            engine.say(translation)
             engine.runAndWait()  
         saves = []
         saves = temp
         temp = []
         dist = []
         coord = []
-        time.sleep(3)
+        time.sleep(1)
 
 def parse_opt():
     parser = argparse.ArgumentParser()
